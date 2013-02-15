@@ -1,0 +1,177 @@
+<apex:page docType="HTML-5.0" 
+            showHeader="false" standardStylesheets="false" 
+            sidebar="false" showChat="false" cache="false"
+            standardController="Pool_Model__c" extensions="PoolModelExt"> 
+
+  <head>
+    <title>Mobile Page Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!-- Bootstrap -->
+    <apex:stylesheet value="{!URLFOR($Resource.MOBILEDEV_Bootstrap, 'css/bootstrap.min.css')}"/>   
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+        padding-bottom: 40px;        
+      }
+      
+      @media screen and (max-width: 1024px) {
+          body { padding-top: 0px; }
+      }  
+      
+      .poolPhoto {
+          margin-bottom: 10px;
+      }    
+    </style>
+    <apex:stylesheet value="{!URLFOR($Resource.MOBILEDEV_Bootstrap, 'css/bootstrap-responsive.min.css')}"/>              
+    <link rel="apple-touch-icon-precomposed" href="{!URLFOR($Resource.MOBILEDEV_Images, 'apple-touch-icon-57-precomposed.png')}"/>
+    <link rel="shortcut icon" href="{!URLFOR($Resource.MOBILEDEV_Images, 'favicon.png')}"/>
+                    
+  </head>
+  <body>
+  
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+     
+          <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+     
+          <!-- Be sure to leave the brand out there if you want it shown -->
+          <a class="brand" href="#">PoolBoys Pool Party Store</a>
+     
+          <!-- Everything you want hidden at 940px or less, place within here -->
+          <div class="nav-collapse collapse">
+            <!-- .nav, .navbar-search, .navbar-form, etc -->
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#">Page 1</a></li>
+              <li><a href="#">Page 2</a></li>
+            </ul>
+            
+            <form id="navbarSearch" class="navbar-search pull-right">
+              <input type="text" class="search-query" placeholder="Search" id="searchTerm"/>
+            </form>            
+            
+          </div>     
+        </div>
+      </div>
+    </div> 
+      
+    <!-- THIS IS THE MEAT OF YOUR CONTENT -->  
+    <div class="container">
+        <div class="hero-unit">
+            <h2>Stare into the deep blue sea</h2>
+            <apex:image value="{!URLFOR($Resource.MOBILEDEV_Images, 'BlueShimmer.jpg')}" styleClass="img-rounded"/>
+            <p></p>
+        </div> <!-- / hero_unit -->
+                
+        <div id="subSectionWrapper" class="row">
+            <div id="searchResults" class="span5">
+                <h3>Sub Section 1</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent tortor mi, euismod ut fermentum a, tristique at nulla. Vestibulum non lacus luctus augue congue vestibulum a quis orci. Pellentesque sit amet eros tellus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc congue dapibus libero, at ultricies tellus malesuada sed. Integer pellentesque sollicitudin laoreet. Phasellus et lectus urna, eu dictum dolor. Donec vel commodo nisl. Nullam et orci et sapien lobortis porta et vel turpis.</p>
+            </div>
+            
+            <div id="poolDetails" class="span7">
+                <h3>Sub Section 2</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent tortor mi, euismod ut fermentum a, tristique at nulla. Vestibulum non lacus luctus augue congue vestibulum a quis orci. Pellentesque sit amet eros tellus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc congue dapibus libero, at ultricies tellus malesuada sed. Integer pellentesque sollicitudin laoreet. Phasellus et lectus urna, eu dictum dolor. Donec vel commodo nisl. Nullam et orci et sapien lobortis porta et vel turpis.</p>  
+            </div>            
+        </div>        
+    </div> <!-- end container -->
+        
+    <!-- Load these scripts in at the end to make it all a little faster..... -->    
+    <apex:includeScript value="{!$Resource.MOBILEDEV_jQuery}"/>    
+    <apex:includeScript value="{!URLFOR($Resource.MOBILEDEV_Bootstrap, 'js/bootstrap.min.js')}"/>    
+    <apex:includeScript value="{!$Resource.MOBILEDEV_iCanHaz}"/>
+        
+    <!-- iCanHaz templates used for any dynamically generated HTML -->
+    <script id="searchResultsTmp" type="text/html">
+        <h3>Search Results</h3>
+        <ul>
+        {{#foundPools}}
+            <a href="{{Id}}" data-poolId="{{Id}}" class="poolDetailLink"><li>{{Name}} - Length: {{Length__c}}m, Width: {{Width__c}}m</li></a>
+        {{/foundPools}}
+        </ul>
+      </li>
+    </script>    
+                        
+    <script id="poolDetailTmp" type="text/html">
+            <h3>{{Name}}</h3>
+            <div class="row">
+                <p class="span3">{{Description__c}}</p>        
+                <img src="{{Photo_URL__c}}" class="img-polaroid poolPhoto span3"/>            
+            </div>              
+            <div class="row">
+                <p class="span4 offset1">
+                    Length: {{Length__c}}m - Width: {{Width__c}}m - Depth (s): {{Depth_deepest__c}}m - Depth (d): {{Depth_shallowest__c}}m                       
+                </p>
+            </div>  
+            <div class="row">
+                <button class="btn btn-small btn-info span6" type="button">Learn More</button>                      
+            </div>
+    </script>      
+                                        
+    <!-- Javascripting magic happens below all this -->                    
+    <script>               
+        var j$ = jQuery.noConflict();                
+                
+       function setupDetailLinks() {
+            j$('.poolDetailLink').on('click', function(event) {
+                console.log('you want to view pool: ' + j$(this).attr('href') );
+                event.preventDefault();  
+                var poolRecordId = j$(this).attr('href');
+                
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.PoolModelExt.getPoolDetails}', 
+                    poolRecordId, 
+                    function(result, event){
+                        if (event.status) {
+                            // Good stuff happens here..
+                            var poolDetailHtml = ich.poolDetailTmp(result);
+                            j$('#poolDetails').html(poolDetailHtml);                            
+                        } else {
+                          // something went wrong....  
+                        }
+                    }, {escape: true}
+                ); // END VF Remoting Manager call.....
+            }); // END poolDetailLink.on(click event
+        }   // END fuction setupDetailLinks         
+                
+        <!-- this fires ONLY once the page is completely loaded -->        
+        j$(document).ready(function() {
+        
+            // Overrides default click action so that if this is a full screen app, will not open external broswer window
+            j$('a').on('click', function(event) {
+                event.preventDefault();
+                alert('nav button clicked');
+                window.location = j$(this).attr('href');            
+            });
+                                    
+           j$("#navbarSearch").on("submit", function(event) {           
+               event.preventDefault();                 
+               var searchTerm = j$("#searchTerm").val();               
+               if (''!= searchTerm) {
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.PoolModelExt.searchPools}', 
+                        searchTerm, 
+                        function(result, event){
+                            if (event.status) {
+                                // Good stuff happens here..
+                                var searchResultHtml = ich.searchResultsTmp(result);
+                                j$('#searchResults').html(searchResultHtml); 
+                                // Since this is newly generated HTML, need to link the events to them
+                                setupDetailLinks();                           
+                            } else {
+                              // something went wrong - this should handle gracefully
+                            }
+                        }, {escape: true}
+                    ); // END VF Remoting Manager call.....                
+               }                                                                            
+           });                      
+         });                
+    </script>                                
+  </body>
+</apex:page>

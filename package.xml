@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SE Learning - Demo Code</fullName>
+    <types>
+        <members>PoolModelExt</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>MobileDevHome</members>
+        <name>ApexPage</name>
+    </types>
+    <types>
+        <members>Pool_Model__c.Depth_deepest__c</members>
+        <members>Pool_Model__c.Depth_shallowest__c</members>
+        <members>Pool_Model__c.Description__c</members>
+        <members>Pool_Model__c.Length__c</members>
+        <members>Pool_Model__c.Photo_URL__c</members>
+        <members>Pool_Model__c.RRP__c</members>
+        <members>Pool_Model__c.Width__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>Pool_Model__c</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>Pool_Model__c.Pool_Detail_Fields</members>
+        <name>FieldSet</name>
+    </types>
+    <types>
+        <members>Pool_Model__c-Pool Model Layout</members>
+        <name>Layout</name>
+    </types>
+    <types>
+        <members>Pool_Model__c.All</members>
+        <name>ListView</name>
+    </types>
+    <types>
+        <members>MOBILEDEV_Bootstrap</members>
+        <members>MOBILEDEV_Images</members>
+        <members>MOBILEDEV_iCanHaz</members>
+        <members>MOBILEDEV_jQuery</members>
+        <name>StaticResource</name>
+    </types>
+    <version>27.0</version>
+</Package>
